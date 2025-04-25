@@ -1,0 +1,13 @@
+clc
+clear all
+close all
+
+a = 10;      % numerador
+b = [1 2 1]; % denominador
+G = tf(a,b)
+H = G/(G + 1) % modelo em malha fechada
+
+figure(1)
+step(G) % Exibir a funcao de transferencia
+figure(2)
+step(H)
