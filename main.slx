@@ -1,13 +1,43 @@
-clc
-clear all
-close all
+clc;
+clear all; 
+close all;
 
-a = 10;      % numerador
-b = [1 2 1]; % denominador
-G = tf(a,b)
-H = G/(G + 1) % modelo em malha fechada
+Kp = 1;
 
-figure(1)
-step(G) % Exibir a funcao de transferencia
-figure(2)
-step(H)
+Ki_valores = linspace(0, 2.5, 20);
+
+num = 10;
+den = [1 2 1];
+G = tf(num, den);
+
+% Entrada de referência
+t = 0:0.01:10;
+r = ones(size(t));  % degrau unitário
+
+figure;
+hold on;
+
+% Colormap para melhor visualização com vinte cores
+colors = jet(20);
+
+for i = 1:20
+    Ki = Ki_valores(i);
+
+    % Compensador PI: C(s) = Kp + Ki/s
+    C = tf([Kp Ki], [1 0]);
+
+    % Sistema em malha fechada: T(s) = C(s)G(s) / (1 + C(s)G(s))
+    T = feedback(C*G, 1);
+
+    % Resposta ao degrau
+    y = step(T, t);
+
+    plot(t, y, 'Color', colors(i,:), 'DisplayName', sprintf('Ki = %.2f', Ki));
+end
+
+% Configuração do gráfico
+title('Resposta ao Degrau para Variação de Ki');
+xlabel('Tempo (s)');
+ylabel('Saída y(t)');
+legend('show');
+grid on;
